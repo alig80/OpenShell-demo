@@ -1,6 +1,6 @@
-# OpenShell Build Demo
+# OpenShell Demo
 
-Five-minute Microsoft Build demo showing a GitHub Copilot-style agent working under NVIDIA OpenShell policy.
+Demo showing a GitHub Copilot-style agent working under NVIDIA OpenShell policy.
 
 The demo is designed to be stage-safe first:
 
@@ -8,7 +8,7 @@ The demo is designed to be stage-safe first:
 - `live` mode follows the current OpenShell workflow and can be used once the host is fully rehearsed.
 - The on-screen point is intentionally simple: same agent, same prompt, different policy.
 
-## Demo Beats
+## Demo
 
 1. The agent lists and summarizes issues from GitHub.
 2. OpenShell policy allows the read calls.
