@@ -1,0 +1,101 @@
+version: 1
+
+# Static sections are applied when the sandbox starts.
+filesystem_policy:
+  include_workdir: true
+  read_only:
+    - /usr
+    - /lib
+    - /proc
+    - /dev/urandom
+    - /app
+    - /etc
+    - /var/log
+  read_write:
+    - /sandbox
+    - /tmp
+    - /dev/null
+
+landlock:
+  compatibility: best_effort
+
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox
+
+# Dynamic section. OpenShell can hot-reload this with:
+# openshell policy set copilot-demo --policy policies/copilot-readonly.yaml --wait
+network_policies:
+  github_api:
+    name: github-api-readonly
+    endpoints:
+      - host: api.github.com
+        port: 443
+        path: "/repos/alig80/OpenShell-demo/**"
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: GET
+              path: "/repos/alig80/OpenShell-demo/**"
+          - allow:
+              method: HEAD
+              path: "/repos/alig80/OpenShell-demo/**"
+          - allow:
+              method: OPTIONS
+              path: "/repos/alig80/OpenShell-demo/**"
+        deny_rules:
+          - method: POST
+            path: "/repos/alig80/OpenShell-demo/**"
+          - method: PATCH
+            path: "/repos/alig80/OpenShell-demo/**"
+          - method: PUT
+            path: "/repos/alig80/OpenShell-demo/**"
+          - method: DELETE
+            path: "/repos/alig80/OpenShell-demo/**"
+    binaries:
+      - { path: /usr/bin/gh }
+      - { path: /usr/bin/curl }
+      - { path: /usr/bin/node }
+      - { path: /usr/local/bin/copilot }
+      - { path: /usr/local/bin/codex }
+
+  github_git:
+    name: github-git-readonly
+    endpoints:
+      - host: github.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: GET
+              path: "/alig80/OpenShell-demo.git/info/refs*"
+          - allow:
+              method: POST
+              path: "/alig80/OpenShell-demo.git/git-upload-pack"
+        deny_rules:
+          - method: POST
+            path: "/alig80/OpenShell-demo.git/git-receive-pack"
+    binaries:
+      - { path: /usr/bin/git }
+
+  github_graphql:
+    name: github-graphql-readonly
+    endpoints:
+      - host: api.github.com
+        port: 443
+        path: "/graphql"
+        protocol: graphql
+        enforcement: enforce
+        rules:
+          - allow:
+              operation_type: query
+        deny_rules:
+          - operation_type: mutation
+    binaries:
+      - { path: /usr/bin/gh }
+      - { path: /usr/bin/curl }
+      - { path: /usr/bin/node }
+      - { path: /usr/local/bin/copilot }
+      - { path: /usr/local/bin/codex }

@@ -1,0 +1,16 @@
+{
+  "issues": [
+    {
+      "title": "Cache warmup script should handle empty repositories",
+      "body": "Demo issue 1. The cache warmup path exits with a noisy error when the repository has no prior artifacts."
+    },
+    {
+      "title": "Document sandbox policy reload command",
+      "body": "Demo issue 2. Add the exact openshell policy set command to the runbook so operators do not restart the sandbox."
+    },
+    {
+      "title": "Fix README typo in agent setup section",
+      "body": "Demo issue 3. Small doc fix used for the Build stage write attempt."
+    }
+  ]
+}

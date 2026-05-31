@@ -1,0 +1,13 @@
+{"version":2,"width":120,"height":30,"timestamp":1780246800,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"}}
+[0.1,"o","$ ./scripts/agent-run.sh --act list\r\n"]
+[0.6,"o","Agent: I found 3 open issues.\r\n"]
+[0.9,"o","12:04:31  ALLOW   GET   api.github.com/repos/alig80/OpenShell-demo/issues  rule: github-api-readonly\r\n"]
+[1.5,"o","$ ./scripts/agent-run.sh --act push\r\n"]
+[2.0,"o","12:04:45  DENY    PATCH api.github.com/repos/alig80/OpenShell-demo/issues/3  rule: github-api-readonly\r\n"]
+[2.4,"o","Agent: I can't close issue #3 or push to main. OpenShell denied the write.\r\n"]
+[3.0,"o","$ ./scripts/policy-apply.sh writeable\r\n"]
+[3.3,"o","12:05:12  RELOAD  policy: copilot-readonly -> copilot-writeable, 0 restarts\r\n"]
+[4.0,"o","$ ./scripts/agent-run.sh --act push\r\n"]
+[4.5,"o","12:05:15  ALLOW   PATCH api.github.com/repos/alig80/OpenShell-demo/issues/3  rule: github-api-demo-write\r\n"]
+[4.8,"o","12:05:16  ALLOW   POST  api.github.com/repos/alig80/OpenShell-demo/git/refs  rule: github-api-demo-write\r\n"]
+[5.2,"o","Agent: Done. Same agent, same prompt. The policy changed, not the code.\r\n"]

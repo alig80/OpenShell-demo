@@ -1,0 +1,114 @@
+version: 1
+
+# Static sections are unchanged from the read-only policy.
+filesystem_policy:
+  include_workdir: true
+  read_only:
+    - /usr
+    - /lib
+    - /proc
+    - /dev/urandom
+    - /app
+    - /etc
+    - /var/log
+  read_write:
+    - /sandbox
+    - /tmp
+    - /dev/null
+
+landlock:
+  compatibility: best_effort
+
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox
+
+# Dynamic section. This allows only the write operations used in Act 4.
+network_policies:
+  github_api:
+    name: github-api-demo-write
+    endpoints:
+      - host: api.github.com
+        port: 443
+        path: "/repos/alig80/OpenShell-demo/**"
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: GET
+              path: "/repos/alig80/OpenShell-demo/**"
+          - allow:
+              method: HEAD
+              path: "/repos/alig80/OpenShell-demo/**"
+          - allow:
+              method: OPTIONS
+              path: "/repos/alig80/OpenShell-demo/**"
+          - allow:
+              method: PATCH
+              path: "/repos/alig80/OpenShell-demo/issues/*"
+          - allow:
+              method: POST
+              path: "/repos/alig80/OpenShell-demo/issues/*/comments"
+          - allow:
+              method: POST
+              path: "/repos/alig80/OpenShell-demo/git/refs"
+          - allow:
+              method: PATCH
+              path: "/repos/alig80/OpenShell-demo/git/refs/**"
+        deny_rules:
+          - method: DELETE
+            path: "/repos/alig80/OpenShell-demo/**"
+          - method: PUT
+            path: "/repos/alig80/OpenShell-demo/**"
+          - method: POST
+            path: "/repos/alig80/OpenShell-demo/actions/**"
+    binaries:
+      - { path: /usr/bin/gh }
+      - { path: /usr/bin/curl }
+      - { path: /usr/bin/node }
+      - { path: /usr/local/bin/copilot }
+      - { path: /usr/local/bin/codex }
+
+  github_git:
+    name: github-git-demo-write
+    endpoints:
+      - host: github.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow:
+              method: GET
+              path: "/alig80/OpenShell-demo.git/info/refs*"
+          - allow:
+              method: POST
+              path: "/alig80/OpenShell-demo.git/git-upload-pack"
+          - allow:
+              method: POST
+              path: "/alig80/OpenShell-demo.git/git-receive-pack"
+    binaries:
+      - { path: /usr/bin/git }
+
+  github_graphql:
+    name: github-graphql-demo-write
+    endpoints:
+      - host: api.github.com
+        port: 443
+        path: "/graphql"
+        protocol: graphql
+        enforcement: enforce
+        rules:
+          - allow:
+              operation_type: query
+          - allow:
+              operation_type: mutation
+              fields: [addComment, updateIssue, createRef]
+        deny_rules:
+          - operation_type: mutation
+            fields: [deleteRepository, deleteRef, updateBranchProtectionRule]
+    binaries:
+      - { path: /usr/bin/gh }
+      - { path: /usr/bin/curl }
+      - { path: /usr/bin/node }
+      - { path: /usr/local/bin/copilot }
+      - { path: /usr/local/bin/codex }
